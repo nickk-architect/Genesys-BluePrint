@@ -48,13 +48,19 @@ async function verifyRequestSignatureImpl(request: Request, secretService: Secre
                 return withFailure('PRECONDITION', 'X-API-KEY header field and signature keyid mismatch');
             }
 
-            const secret = secretService.getSecretForKey(keyId);
-            const code = secret ? 'GOODKEY' : 'BADKEY';
-            
-            return {
-                code: code,
-                key: secret
-            };
+            try {
+                // Use the enhanced secret service (supports async operations)
+                const secret = await secretService.getSecretForKey(keyId);
+                const code = (secret && secret.length > 0) ? 'GOODKEY' : 'BADKEY';
+                
+                return {
+                    code: code,
+                    key: secret
+                };
+            } catch (error) {
+                console.error('Error retrieving secret:', error);
+                return withFailure('PRECONDITION', 'Failed to retrieve secret');
+            }
         }
     });
 
