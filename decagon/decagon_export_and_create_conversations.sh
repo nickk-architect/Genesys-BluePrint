@@ -30,3 +30,19 @@ curl -X POST 'https://api.decagon.ai/conversation/new_by_api_key' \
       "Misc_Data": "hello world"
     }
   }'
+
+
+# Summarizing a Conversation
+#
+# Use GET /conversation/summarize to retrieve an AI-generated summary of a completed
+# conversation. Pass the conversation_id as a query parameter.
+#
+# Typical usage: after a call ends, pass the conversation_id returned from
+# /conversation/new_by_api_key (or obtained via /conversation/export) to get
+# a summary of what was discussed.
+
+CONVERSATION_ID="YOUR_CONVERSATION_ID"
+
+curl -G "https://api.decagon.ai/conversation/summarize" \
+  -H 'Authorization: Bearer YOUR_API_KEY' \
+  --data-urlencode "conversation_id=${CONVERSATION_ID}"
