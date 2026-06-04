@@ -1,0 +1,17 @@
+export type Uuid = string;
+export type SequenceNumber = number;
+export type JsonValue = string | number | boolean | null | JsonObject | JsonArray | JsonStringMap;
+export type JsonArray = JsonValue[];
+export type JsonObject = { [key: string]: JsonValue };
+export type JsonStringMap = { [key: string]: string };
+export type EmptyObject = { [K in any]: never };
+export type Duration = `PT${number}S`;
+export type MediaChannel = 'external' | 'internal';
+export type MediaChannels = MediaChannel[];
+export type MediaType = 'audio';
+export type MediaFormat = 'PCMU' | 'L16';
+export type MediaRate = 8000;
+export type MediaParameter = { type: MediaType; format: MediaFormat; channels: MediaChannels; rate: MediaRate; };
+export type MediaParameters = MediaParameter[];
+export type LanguageCode = string;
+export type EventEntityBase<T extends string, D extends JsonValue> = { type: T; data: D; };

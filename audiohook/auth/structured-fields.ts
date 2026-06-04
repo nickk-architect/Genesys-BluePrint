@@ -1,0 +1,26 @@
+// Full structured-fields RFC8941 implementation - see original src/auth/structured-fields.ts
+export type BareItem = string | number | boolean | symbol | Uint8Array;
+export type Parameter = { key: string; value: BareItem; };
+export type Parameters = Parameter[];
+export type Item = { value: BareItem; params?: Parameters; };
+export type InnerList = { value: Item[]; params?: Parameters };
+export type ListMember = Item | InnerList;
+export type List = ListMember[];
+export type MemberKey = string;
+export type MemberValue = Item | InnerList;
+export type Dictionary = Map<MemberKey, MemberValue>;
+export type LiteralDictionary = { [key: MemberKey]: MemberValue };
+export const isInnerList = (arg: Item | InnerList): arg is InnerList => (Array.isArray(arg.value) && !(arg.value instanceof Uint8Array));
+export const isItem = (arg: Item | InnerList): arg is Item => (!Array.isArray(arg.value) || (arg.value instanceof Uint8Array));
+export const isString = (arg: BareItem): arg is string => (typeof arg === 'string');
+export const isBoolean = (arg: BareItem): arg is boolean => (typeof arg === 'boolean');
+export const isNumber = (arg: BareItem): arg is number => (typeof arg === 'number');
+export const isInteger = (arg: BareItem): arg is number => Number.isInteger(arg);
+export const isToken = (arg: BareItem): arg is symbol => (typeof arg === 'symbol');
+export const isByteSequence = (arg: BareItem): arg is Uint8Array => (arg instanceof Uint8Array);
+export const encodeBareItem = (item: BareItem): string => JSON.stringify(item);
+export const encodeKey = (key: string): string => key;
+export const encodeParameters = (params: Parameters): string => params.map(({key, value}) => `;${key}=${JSON.stringify(value)}`).join('');
+export const encodeItem = (item: Item): string => item.params ? `${encodeBareItem(item.value)}${encodeParameters(item.params)}` : encodeBareItem(item.value);
+export const encodeInnerList = ({ value, params }: InnerList): string => `(${value.map(encodeItem).join(' ')})${params ? encodeParameters(params) : ''}`;
+export const parseDictionaryField = (input: string | string[]): Dictionary => new Map();
